@@ -5,4 +5,8 @@
  - gives ID (number), Name, birthday, days until next birthday from today
  - rembirth get -> prints database
  - rembirth new -> prints upcoming birthday
+
+
+
+ get, new
  
