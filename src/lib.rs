@@ -1,7 +1,5 @@
-use crate::calculations::next_birthday;
 use rusqlite::Connection;
 use std::env;
-mod calculations;
 use pretty_sqlite::print_table;
 
 struct Birthday {
@@ -53,6 +51,21 @@ impl App {
         print_table(&self.conn, "Birthdays")?;
         Ok(())
     }
+    
+    fn calculations(&self) -> Result<(), Box<dyn std::error::Error>> {
+        let conn = Connection::open("birth.db")?; //claude generated
+            let max_id: i64 = conn.query_row(
+                "SELECT MAX(id) FROM Birthdays",
+                [],
+                |row| row.get(0)
+            )?;
+
+        for l in 
+
+
+        Ok(())
+    }
+
 }
 pub fn match_functions() {
     let args: Vec<String> = env::args().collect();
@@ -70,7 +83,11 @@ pub fn match_functions() {
                     eprintln!("Error: {}", e);
                 }
             }
-            "next" => next_birthday(),
+            "next" => {
+                if let Err(e) = calculations() {
+                    eprintln!("Error: {}", e);
+                }
+            }
             "--help" => help(),
             _ => eprintln!("Not a function, use the \"--help\" function next time"),
         }
@@ -105,9 +122,16 @@ pub fn new(argum: &[String]) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-//TODO: implement this everything is said and done
 pub fn list() -> Result<(), Box<dyn std::error::Error>> {
     let app = App::new()?;
     app.list()?;
     Ok(())
 }
+
+pub fn calculations() -> Result<(), Box<dyn std::error::Error>> { //box dyn is dynamic error handle
+    let app = App::new()?; 
+    app.calculations()?;
+    Ok(())
+}
+
+
