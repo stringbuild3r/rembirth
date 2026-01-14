@@ -1,4 +1,4 @@
-# Frame of Language
+# Frame of Program
  - Takes current year
  - rembirth new "Name" 01 30 2007 (structure)
   - adding to a sqlite database
@@ -7,6 +7,4 @@
  - rembirth new -> prints upcoming birthday
 
 
-
- get, new
  

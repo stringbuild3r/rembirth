@@ -1,5 +1,7 @@
 use std::env;
 use rusqlite::Connection;
+//use crate::calculations::next_birthday;
+mod calculations;
 
 #[allow(unused_variables)]
 #[allow(dead_code)]
@@ -34,11 +36,27 @@ pub fn match_functions() {
     match query {
         "new"=> new(&args),
         "get" => list(),
-        &_ => eprintln!("Not a function"),
-        
+ //      "next" => next_birthday(),
+        "--help" => help(),
+        _ => eprintln!("Not a function, use the \"--help\" function next time"),
         }
     }
 }
+
+
+pub fn help() {
+    println!("
+  These are common birthday commands used in various situations:
+
+  new       add a new birthday 
+  get       get a list of everything in the birthday database in table fashion 
+  next      get the next birthday in terms of days according to the current local date
+
+  ");
+}
+
+
+
 //cargo run -- new "aryan" 01 30 2007
 pub fn new(argum: &[String]) {
     let birthing = Birthday {
@@ -54,6 +72,8 @@ pub fn new(argum: &[String]) {
 
 //TODO: implement this everything is said and done
 pub fn list() {
+
+
     unimplemented!()
 }
 
