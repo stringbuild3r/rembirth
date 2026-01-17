@@ -1,7 +1,7 @@
-use rusqlite::Connection;
 use chrono::prelude::*;
-use std::{env, usize};
 use pretty_sqlite::print_table;
+use rusqlite::Connection;
+use std::{env, usize};
 
 struct Birthday {
     name: String,
@@ -52,53 +52,69 @@ impl App {
         print_table(&self.conn, "Birthdays")?;
         Ok(())
     }
-    
+
     fn calculations(&self) -> Result<(), Box<dyn std::error::Error>> {
         let local_datetime: DateTime<Local> = Local::now();
         let curr_month: u32 = local_datetime.month();
         let curr_date: u32 = local_datetime.day();
 
-        let conn = Connection::open("birth.db")?; 
-            let max_id: i64 = conn.query_row(
-                "SELECT MAX(id) FROM Birthdays",
-                [],
-                |row| row.get(0) 
-            )?;
-        
-        let id_tracker: Option<i32> = None;
+        let conn = Connection::open("birth.db")?;
+        let max_id: i64 = conn.query_row("SELECT MAX(id) FROM Birthdays", [], |row| row.get(0))?;
 
-        for i in 1..= max_id {
-            let month: u32 = match conn.query_row(
-                "select month from birthdays where id = ?1",
-                [i],            
-                |row| row.get(0)
-            ) {
-                Ok(mon) => mon,
-                Err(_) => {
-                    continue;
-                }
-            };
+        let mut min_days_until: u32 = 366;
+        let mut closest_id: Option<i64> = None;
 
+        let day_rn: u32 = get_doy(curr_month, curr_date);
 
-            if curr_month > month {
-                continue;
-            } else {
-                
+        for i in 1..=max_id {
+            let month: u32 =
+                match conn.query_row("select month from birthdays where id = ?1", [i], |row| {
+                    row.get(0)
+                }) {
+                    Ok(mon) => mon,
+                    Err(_) => continue,
+                };
+
+            let day: u32 =
+                match conn.query_row("select day from birthdays where id = ?1", [i], |row| {
+                    row.get(0)
+                }) {
+                    Ok(da) => da,
+                    Err(_) => continue,
+                };
+
+            let _year: u32 =
+                match conn.query_row("select year from birthdays where id = ?1", [i], |row| {
+                    row.get(0)
+                }) {
+                    Ok(ye) => ye,
+                    Err(_) => continue,
+                };
+
+            let db_day: u32 = get_doy(month, day);
+
+            let days_until = (db_day + 365 - day_rn) % 365;
+
+            if days_until < min_days_until {
+                min_days_until = days_until;
+                closest_id = Some(i);
             }
-                
 
-    }
+            println!(
+                "Closest birthday ID: {:?}, in {} days",
+                closest_id, min_days_until
+            );
+        }
+
+        fn get_doy(mon: u32, day: u32) -> u32 {
+            let cum_days: Vec<u32> = vec![0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+            let month_offset = cum_days.get((mon - 1) as usize).unwrap(); 
+            month_offset + day
+        }
         Ok(())
     }
-
-    fn get_doy(mon: u32, day: u32) -> u32 {
-        let cum_days: Vec<u32> = vec![0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
-        let month_offset = cum_days.get((mon-1) as usize).unwrap(); //as usize necessary for valid
-        //index type
-        month_offset + day
-    }
-
 }
+
 pub fn match_functions() {
     let args: Vec<String> = env::args().collect();
     let query = args[1].as_str();
@@ -139,7 +155,6 @@ pub fn help() {
     );
 }
 
-//cargo run -- new "aryan" 01 30 2007
 pub fn new(argum: &[String]) -> Result<(), Box<dyn std::error::Error>> {
     let birthing = Birthday {
         name: argum[2].clone(),
@@ -160,10 +175,9 @@ pub fn list() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-pub fn calculations() -> Result<(), Box<dyn std::error::Error>> { //box dyn is dynamic error handle
-    let app = App::new()?; 
+pub fn calculations() -> Result<(), Box<dyn std::error::Error>> {
+    //box dyn is dynamic error handle
+    let app = App::new()?;
     app.calculations()?;
     Ok(())
 }
-
-
