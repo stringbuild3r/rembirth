@@ -9,7 +9,6 @@ fn create_database() -> Result<()> {
         return Ok(());
     }
 
-    println!("Creating new database...");
     let conn = Connection::open(db_path)?;
 
     conn.execute(
@@ -22,8 +21,6 @@ fn create_database() -> Result<()> {
         )",
         (),
     )?;
-
-    println!("Database created successfully!");
     Ok(())
 }
 
