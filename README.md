@@ -11,4 +11,4 @@ cp target/release/rembirth ~/.local/bin/rembirth
 
 ## List of Commands
 
-- Do rembirth --help to het list of commands.
+- Do rembirth --help to get a full list of commands.
