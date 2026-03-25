@@ -138,7 +138,7 @@ pub fn match_functions() {
 
 pub fn help() {
     println!(
-        "Usage: rembirth <command>
+        "Do: rembirth <command>
 
 Commands:
   new <name> <month> <day> <year>   Add a new birthday

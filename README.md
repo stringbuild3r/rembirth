@@ -4,8 +4,8 @@ A command-line tool to remember and track birthdays.
 
 ## Installation
 
-```bash
-cargo build --release
+```bash 
+cargo build --release 
 cp target/release/rembirth ~/.local/bin/rembirth
 ```
 
