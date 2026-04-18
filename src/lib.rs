@@ -94,6 +94,9 @@ fn get_doy(month: u32, day: u32) -> u32 {
     cum_days[(month - 1) as usize] + day
 }
 
+
+
+// How to get input from the command line (IMPORTANT)
 pub fn match_functions() {
     let args: Vec<String> = env::args().collect();
 
